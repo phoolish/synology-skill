@@ -30,12 +30,19 @@ Full reference: [`references/container-manager-api.md`](../references/container-
 | Full container logs | `ssh.docker_logs()` 🔵 |
 | Container config / env vars | `ssh.docker_inspect()` 🔵 |
 
-**SSH requires paramiko.** Always check availability before using SSH operations:
+**SSH requires both a CLI environment and paramiko.** Always check both flags:
 
 ```python
+from tools.synology_client import SSH_AVAILABLE, RUNNING_IN_CLI
+
+if not RUNNING_IN_CLI:
+    raise RuntimeError("SSH is only available in Claude Code CLI, not the web UI.")
 if not SSH_AVAILABLE:
     raise RuntimeError("Install paramiko: pip install paramiko")
 ```
+
+`RUNNING_IN_CLI` is `True` only when `CLAUDECODE=1` is set (Claude Code CLI bash environment).
+It is `False` in the web UI regardless of whether paramiko is installed.
 
 SSH must also be enabled on the NAS: DSM Control Panel → Terminal & SNMP → Enable SSH service.
 

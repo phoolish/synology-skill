@@ -162,20 +162,32 @@ Full list: [`references/dsm-api-gaps.md`](references/dsm-api-gaps.md)
 
 ## SSH Availability
 
-SSH fallback is explicit and requires `paramiko`. Always check before use:
+SSH requires both `paramiko` installed **and** a CLI execution environment.
+Always check both flags before attempting SSH:
 
 ```python
-from tools.synology_client import SSH_AVAILABLE, get_ssh
+from tools.synology_client import SSH_AVAILABLE, RUNNING_IN_CLI, get_ssh
 
+if not RUNNING_IN_CLI:
+    raise RuntimeError(
+        "SSH is only available in Claude Code CLI environments. "
+        "The web UI does not have access to a local network or filesystem."
+    )
 if not SSH_AVAILABLE:
-    raise RuntimeError("SSH not available — install paramiko: pip install paramiko")
+    raise RuntimeError("paramiko not installed — run: pip install paramiko")
 
 with get_ssh() as ssh:
     stdout, stderr, exit_code = ssh.run("hostname")
 ```
 
-SSH is not available in all environments (e.g., Claude web UI without a terminal).
-Do not silently fall back to SSH — always confirm it is available first.
+| Flag | Meaning |
+|------|---------|
+| `RUNNING_IN_CLI` | `True` when `CLAUDECODE=1` is set (Claude Code CLI bash environment) |
+| `SSH_AVAILABLE` | `True` when `paramiko` is importable |
+
+Both must be `True` for SSH to work. `RUNNING_IN_CLI` is `False` in the web UI,
+Claude hooks, and status-line commands even when paramiko is installed.
+Do not silently fall back to SSH — always check both flags explicitly.
 
 ---
 

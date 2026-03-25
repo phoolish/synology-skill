@@ -38,6 +38,12 @@ try:
 except ImportError:
     SSH_AVAILABLE = False
 
+# True when running inside a bash environment spawned by Claude Code CLI.
+# CLAUDECODE=1 is set by the CLI in every Bash tool invocation.
+# It is NOT set in the Claude.ai web UI or in hooks/status-line commands.
+# When False, SSH connections are unlikely to work (no access to local network/filesystem).
+RUNNING_IN_CLI = os.environ.get("CLAUDECODE") == "1"
+
 # Default Docker binary path on DSM — not always in $PATH for SSH users
 _DOCKER_BIN_DEFAULT = "/var/packages/ContainerManager/target/usr/bin/docker"
 
