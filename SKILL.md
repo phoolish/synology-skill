@@ -1,9 +1,13 @@
 ---
 name: synology-nas
-description: Use when interacting with a Synology NAS — browsing files, managing downloads, scheduling tasks, or controlling containers via DSM API or SSH.
+description: Use when interacting with a Synology NAS — browsing files, managing downloads, scheduling tasks, or controlling containers via DSM API or SSH. Requires Claude Code CLI — does not work in the Claude.ai web UI.
 ---
 
 # Synology NAS
+
+> **CLI only.** On load, check `RUNNING_IN_CLI`. If `False`, immediately tell the user:
+> *"The Synology NAS skill requires Claude Code CLI. It cannot run in the Claude.ai web UI — environment variables and local Python execution are not available here."*
+> Then stop — do not attempt any operations.
 
 Python library: `synology-api` v0.8.2. Optional SSH: `paramiko`.
 Helper module: `tools/synology_client.py`. Service skills: `skills/`.
